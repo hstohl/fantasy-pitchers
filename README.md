@@ -10,7 +10,7 @@ My program will use the BeautifulSoup python package as a scraper to scrape the 
 
 ## Database and ERD
 
-![Database ERD](database_erd.png)
+![Database ERD](database-erd.png)
 
 The database will hold match-ups of teams and their starting pitchers. These match-ups will link to correlating stats for the pitcher and the batters of the team they are playing against. It will scrape the schedule from https://www.mlb.com/schedule and the stats from https://www.mlb.com/stats/team.
 
@@ -18,4 +18,10 @@ The database will hold pitcher stats earned runs average (ERA), walks plus hits 
 
 ## Hosting Technologies
 
-My database will be hosted in Supabase and the site will be hosted on Vercel.
+My database will be in Supabase and the site will be hosted on Vercel.
+
+![Flow Diagram](flow-diagram.png)
+
+## Road Map
+
+By Monday June 9th I want my scraper and database to be up and working together. By Wednesday I'd like my logic to be all working together and my front end in Vercel started. By the end of class I'd like it to be up and working for the most part with some opportunities for expansion, such as comparing against specific line ups, factoring in if the pitchers/batters are left handed or right handed, etc.
