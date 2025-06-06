@@ -2,7 +2,7 @@
 
 ## Overview
 
-I am in a Fantasy Baseball League with my brothers, my dad, and some friends, and I am looking for a leg up on the competition. The name of the game is to pick the players that are going to perform the best, and that means I would want to pick the pitchers who are playing in a favorable match-up. In other words I want to pick up good pitchers playing against bad teams to maximize the fantasy points they score.
+I am in a Fantasy Baseball League with my brothers, my dad, and some friends, and I am looking for a leg up on the competition. The name of the game is to pick the players that are going to perform the best, and that means I would want to pick the pitchers who are playing in a favorable match-up. In other words I want to pick up good pitchers playing against bad teams to maximize the fantasy points they score. This project will look at the stats of pitchers and teams playing each other and give a projection for who would be the best pitcher to pick up that week.
 
 ## Web Scraper
 
