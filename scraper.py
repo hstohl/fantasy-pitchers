@@ -52,6 +52,7 @@ for date_entry in matchup_json['dates']:
                     {}
                 )
                 avg_innings_pitched = float(pitching_stats.get('inningsPitched')) / pitching_stats.get('gamesStarted') if pitching_stats.get('gamesStarted') else 0
+                print("We are here!!", avg_innings_pitched)
 
                 avg_innings_pitched = float(avg_innings_pitched)
 
