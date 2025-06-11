@@ -76,8 +76,8 @@ try:
             home_pitcher_score = away_team_score
 
 
-        print(f"{away_pitcher} vs {home_team} Score: {away_pitcher_score}")
-        print(f"{home_pitcher} vs {away_team} Score: {home_pitcher_score}")
+        print(f"{away_pitcher} vs {home_team} Score: {round(away_pitcher_score, 2)}")
+        print(f"{home_pitcher} vs {away_team} Score: {round(home_pitcher_score, 2)}")
 
     connection.commit()
     # Close the cursor and connection
