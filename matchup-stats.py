@@ -71,12 +71,25 @@ for date_entry in matchup_json['dates']:
 
                 # avg_innings_pitched = float(avg_innings_pitched)
 
-                era = float(pitching_stats.get('era', 0))
-                k_per_9 = float(pitching_stats.get('strikeoutsPer9Inn', 0))
+                era = pitching_stats.get('era', 0)
+                if '-' not in era:
+                    era = float(era)
+                else:
+                    era = 4.0  # Default ERA if not available
+                k_per_9 = pitching_stats.get('strikeoutsPer9Inn', 0)
+                if '-' not in k_per_9:
+                    k_per_9 = float(k_per_9)
+                else:
+                    k_per_9 = 8.0 # Default K/9 if not available
+                whip = pitching_stats.get('whip', 0)
+                if '-' not in whip:
+                    whip = float(whip)
+                else:
+                    whip = 1.3 # Default WHIP if not available
                 game_info[f'{side}_pitcher'] = {
                     'name': pitcher['fullName'],
                     'era_per_inning': era / 9 if era else 0,
-                    'whip': float(pitching_stats.get('whip', 0)),
+                    'whip': whip,
                     'k_per_inning': k_per_9 / 9 if k_per_9 else 0,
                 }
 
@@ -103,6 +116,7 @@ try:
     cursor = connection.cursor()
 
     cursor.execute("""
+        DROP TABLE IF EXISTS games;
         CREATE TABLE IF NOT EXISTS games (
             game_id SERIAL PRIMARY KEY,
             game_date DATE NOT NULL,
@@ -114,6 +128,7 @@ try:
     """)
     
     cursor.execute("""
+        DROP TABLE IF EXISTS pitchers;
         CREATE TABLE IF NOT EXISTS pitchers (
             pitcher_id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
