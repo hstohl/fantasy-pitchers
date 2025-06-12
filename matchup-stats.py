@@ -116,7 +116,6 @@ try:
     cursor = connection.cursor()
 
     cursor.execute("""
-        DROP TABLE IF EXISTS games;
         CREATE TABLE IF NOT EXISTS games (
             game_id SERIAL PRIMARY KEY,
             game_date DATE NOT NULL,
@@ -128,7 +127,6 @@ try:
     """)
     
     cursor.execute("""
-        DROP TABLE IF EXISTS pitchers;
         CREATE TABLE IF NOT EXISTS pitchers (
             pitcher_id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
@@ -138,36 +136,69 @@ try:
         );
     """)
 
+    def get_pitcher_id(pitcher):
+        if pitcher is None:
+            return None
+
+        # Check if pitcher already exists
+        cursor.execute("SELECT pitcher_id FROM pitchers WHERE name = %s", (pitcher['name'],))
+        result = cursor.fetchone()
+        if result:
+            return result[0]
+        
+        # Insert new pitcher
+        cursor.execute("""
+            INSERT INTO pitchers (name, era_per_inning, whip, k_per_inning)
+            VALUES (%s, %s, %s, %s)
+            RETURNING pitcher_id;
+        """, (
+            pitcher['name'],
+            pitcher['era_per_inning'],
+            pitcher['whip'],
+            pitcher['k_per_inning']
+        ))
+        return cursor.fetchone()[0]
+
+
     for game in matchup_results:
         game_date = game["date"]
         away_team = game["away_team"]
         home_team = game["home_team"]
+        away_pitcher = game.get("away_pitcher")
+        home_pitcher = game.get("home_pitcher")
 
-        def insert_pitcher(pitcher):
-            if pitcher is None:
-                return None
-            cursor.execute("""
-                INSERT INTO pitchers (name, era_per_inning, whip, k_per_inning)
-                VALUES (%s, %s, %s, %s)
-                RETURNING pitcher_id;
-            """, (
-                pitcher['name'],
-                pitcher['era_per_inning'],
-                pitcher['whip'],
-                pitcher['k_per_inning']
-            ))
-            return cursor.fetchone()[0]
+        away_pitcher_id = get_pitcher_id(away_pitcher)
+        home_pitcher_id = get_pitcher_id(home_pitcher)
 
-        away_pitcher_id = insert_pitcher(game.get("away_pitcher"))
-        home_pitcher_id = insert_pitcher(game.get("home_pitcher"))
-
+        # Check if game already exists
         cursor.execute("""
-            INSERT INTO games (game_date, away_team, home_team, away_pitcher_id, home_pitcher_id)
-            VALUES (%s, %s, %s, %s, %s);
-        """, (
-            game_date, away_team, home_team,
-            away_pitcher_id, home_pitcher_id
-        ))
+            SELECT game_id, away_pitcher_id, home_pitcher_id FROM games
+            WHERE game_date = %s AND away_team = %s AND home_team = %s;
+        """, (game_date, away_team, home_team))
+
+        existing_game = cursor.fetchone()
+
+        if existing_game:
+            game_id, existing_away_id, existing_home_id = existing_game
+            # Update any missing pitcher slots
+            if away_pitcher_id and not existing_away_id:
+                cursor.execute("""
+                    UPDATE games SET away_pitcher_id = %s WHERE game_id = %s;
+                """, (away_pitcher_id, game_id))
+
+            if home_pitcher_id and not existing_home_id:
+                cursor.execute("""
+                    UPDATE games SET home_pitcher_id = %s WHERE game_id = %s;
+                """, (home_pitcher_id, game_id))
+        else:
+            # Insert new game
+            cursor.execute("""
+                INSERT INTO games (game_date, away_team, home_team, away_pitcher_id, home_pitcher_id)
+                VALUES (%s, %s, %s, %s, %s);
+            """, (
+                game_date, away_team, home_team,
+                away_pitcher_id, home_pitcher_id
+            ))
 
     connection.commit()
     # Close the cursor and connection
