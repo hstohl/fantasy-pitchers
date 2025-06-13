@@ -12,36 +12,7 @@ export default async function handler(
 ) {
   const { team, opponent, date } = req.query;
 
-  const { data: games, error } = await supabase.from("games").select(`
-    game_id,
-    game_date,
-    away_team,
-    home_team,
-    away_pitcher:away_pitcher_id (
-      name,
-      era_per_inning,
-      whip,
-      k_per_inning
-    ),
-    home_pitcher:home_pitcher_id (
-      name,
-      era_per_inning,
-      whip,
-      k_per_inning
-    ),
-    away_team_stats:away_team (
-      team_name,
-      runs_per_inning,
-      hits_walks_per_inning,
-      strikeouts_per_inning
-    ),
-    home_team_stats:home_team (
-      team_name,
-      runs_per_inning,
-      hits_walks_per_inning,
-      strikeouts_per_inning
-    )
-  `);
+  const { data: games, error } = await supabase.rpc("get_pitcher_projections");
 
   if (error) return res.status(500).json({ error: error.message });
 
