@@ -14,34 +14,44 @@ type Pitcher = {
   innings: number;
 };
 
-const mockPitchers: Pitcher[] = [
-  {
-    name: "Jacob deGrom",
-    team: "Rangers",
-    opponent: "Yankees",
-    date: "2025-06-12",
-    score: 2.3,
-    era: 2.15,
-    whip: 0.89,
-    strikeouts: 12,
-    innings: 6,
-  },
-  {
-    name: "Shohei Ohtani",
-    team: "Dodgers",
-    opponent: "Giants",
-    date: "2025-06-13",
-    score: 1.9,
-    era: 2.91,
-    whip: 1.07,
-    strikeouts: 9,
-    innings: 5,
-  },
+const mlbTeams = [
+  "Angels",
+  "Astros",
+  "Athletics",
+  "Blue Jays",
+  "Braves",
+  "Brewers",
+  "Cardinals",
+  "Cubs",
+  "Diamondbacks",
+  "Dodgers",
+  "Giants",
+  "Guardians",
+  "Mariners",
+  "Marlins",
+  "Mets",
+  "Nationals",
+  "Orioles",
+  "Padres",
+  "Phillies",
+  "Pirates",
+  "Rangers",
+  "Rays",
+  "Red Sox",
+  "Reds",
+  "Rockies",
+  "Royals",
+  "Tigers",
+  "Twins",
+  "White Sox",
+  "Yankees",
 ];
 
 export default function Home() {
   const [teamFilter, setTeamFilter] = useState("");
+  const [opponentFilter, setOpponentFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
+  const [pitchers, setPitchers] = useState<Pitcher[]>([]);
   const [selectedPitcher, setSelectedPitcher] = useState<Pitcher | null>(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -49,12 +59,16 @@ export default function Home() {
     document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
 
-  const filtered = mockPitchers.filter(
-    (p) =>
-      (!teamFilter ||
-        p.team.toLowerCase().includes(teamFilter.toLowerCase())) &&
-      (!dateFilter || p.date === dateFilter)
-  );
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (teamFilter) params.append("team", teamFilter);
+    if (opponentFilter) params.append("opponent", opponentFilter);
+    if (dateFilter) params.append("date", dateFilter);
+
+    fetch(`/api/pitchers?${params.toString()}`)
+      .then((res) => res.json())
+      .then((data) => setPitchers(data));
+  }, [teamFilter, opponentFilter, dateFilter]);
 
   return (
     <main className="min-h-screen bg-gray-100 dark:bg-gray-900 p-6 transition-colors duration-300">
@@ -73,13 +87,32 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <input
-            type="text"
-            placeholder="Filter by team"
+          <select
             className="border px-3 py-2 rounded w-full md:w-1/2 dark:bg-gray-700 dark:border-gray-600"
             value={teamFilter}
             onChange={(e) => setTeamFilter(e.target.value)}
-          />
+          >
+            <option value="">All Teams</option>
+            {mlbTeams.map((team) => (
+              <option key={team} value={team}>
+                {team}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="border px-3 py-2 rounded w-full md:w-1/2 dark:bg-gray-700 dark:border-gray-600"
+            value={opponentFilter}
+            onChange={(e) => setOpponentFilter(e.target.value)}
+          >
+            <option value="">All Opponents</option>
+            {mlbTeams.map((team) => (
+              <option key={team} value={team}>
+                {team}
+              </option>
+            ))}
+          </select>
+
           <input
             type="date"
             className="border px-3 py-2 rounded w-full md:w-1/2 dark:bg-gray-700 dark:border-gray-600"
@@ -99,7 +132,7 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((p, i) => (
+            {pitchers.map((p, i) => (
               <tr
                 key={i}
                 onClick={() => setSelectedPitcher(p)}
@@ -109,10 +142,10 @@ export default function Home() {
                 <td className="p-2">{p.team}</td>
                 <td className="p-2">{p.opponent}</td>
                 <td className="p-2">{p.date}</td>
-                <td className="p-2">{p.score.toFixed(1)}</td>
+                <td className="p-2">{p.score}</td>
               </tr>
             ))}
-            {filtered.length === 0 && (
+            {pitchers.length === 0 && (
               <tr>
                 <td
                   colSpan={5}
@@ -146,8 +179,7 @@ export default function Home() {
                   <strong>Date:</strong> {selectedPitcher.date}
                 </li>
                 <li>
-                  <strong>Projected Score:</strong>{" "}
-                  {selectedPitcher.score.toFixed(1)}
+                  <strong>Projected Score:</strong> {selectedPitcher.score}
                 </li>
                 <li>
                   <strong>ERA:</strong> {selectedPitcher.era}
