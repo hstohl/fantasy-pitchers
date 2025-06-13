@@ -40,7 +40,7 @@ export default async function handler(
     const awayPitcher = away_pitcher?.[0] || null;
     const homePitcher = home_pitcher?.[0] || null;
 
-    console.log(awayPitcher, homePitcher);
+    console.log("Home away:", awayPitcher, homePitcher);
 
     const away_team_score =
       ((awayStats.runs_per_inning ?? 0) * -2 +
