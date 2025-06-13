@@ -24,6 +24,8 @@ export default async function handler(
 
   const results = [];
 
+  console.log("Games count:", games?.length);
+
   for (const game of games || []) {
     const {
       game_date,
