@@ -110,12 +110,14 @@ export default async function handler(
     }
   }
 
-  const filtered = results.filter(
-    (p) =>
-      (!team || p.team === team) &&
-      (!opponent || p.opponent === opponent) &&
-      (!date || p.date === date)
-  );
+  //   const filtered = results.filter(
+  //     (p) =>
+  //       (!team || p.team === team) &&
+  //       (!opponent || p.opponent === opponent) &&
+  //       (!date || p.date === date)
+  //   );
+
+  const filtered = results;
 
   res.status(200).json(filtered);
 }
