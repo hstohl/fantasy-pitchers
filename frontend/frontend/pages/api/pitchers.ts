@@ -24,7 +24,7 @@ export default async function handler(
 
   const results = [];
 
-  console.log("Games count:", games?.length);
+  console.log("Games count:", games.length);
 
   for (const game of games || []) {
     const {
@@ -42,6 +42,7 @@ export default async function handler(
     const awayPitcher = away_pitcher?.[0] || null;
     const homePitcher = home_pitcher?.[0] || null;
 
+    console.log("Home away:", awayStats, homeStats);
     console.log("Home away:", awayPitcher, homePitcher);
 
     const away_team_score =
