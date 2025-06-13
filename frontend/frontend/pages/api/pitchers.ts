@@ -40,6 +40,8 @@ export default async function handler(
     const awayPitcher = away_pitcher?.[0] || null;
     const homePitcher = home_pitcher?.[0] || null;
 
+    console.log(awayPitcher, homePitcher);
+
     const away_team_score =
       ((awayStats.runs_per_inning ?? 0) * -2 +
         (awayStats.hits_walks_per_inning ?? 0) * -1 +
@@ -109,6 +111,8 @@ export default async function handler(
       });
     }
   }
+
+  console.log("Results count:", results.length);
 
   //   const filtered = results.filter(
   //     (p) =>

@@ -34,7 +34,6 @@ const mlbTeams = [
   "Minnesota Twins",
   "New York Mets",
   "New York Yankees",
-  "Oakland Athletics",
   "Philadelphia Phillies",
   "Pittsburgh Pirates",
   "San Diego Padres",
