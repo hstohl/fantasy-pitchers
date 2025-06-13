@@ -11,7 +11,6 @@ type Pitcher = {
   era: number;
   whip: number;
   strikeouts: number;
-  innings: number;
 };
 
 const mlbTeams = [
@@ -189,9 +188,6 @@ export default function Home() {
                 </li>
                 <li>
                   <strong>Strikeouts:</strong> {selectedPitcher.strikeouts}
-                </li>
-                <li>
-                  <strong>Innings:</strong> {selectedPitcher.innings}
                 </li>
               </ul>
             </div>
