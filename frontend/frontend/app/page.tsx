@@ -181,13 +181,14 @@ export default function Home() {
                   <strong>Projected Score:</strong> {selectedPitcher.score}
                 </li>
                 <li>
-                  <strong>ERA:</strong> {selectedPitcher.era}
+                  <strong>ERA:</strong> {selectedPitcher.era * 9}
                 </li>
                 <li>
                   <strong>WHIP:</strong> {selectedPitcher.whip}
                 </li>
                 <li>
-                  <strong>Strikeouts:</strong> {selectedPitcher.strikeouts}
+                  <strong>Strikeouts per Inning:</strong>{" "}
+                  {selectedPitcher.strikeouts}
                 </li>
               </ul>
             </div>
