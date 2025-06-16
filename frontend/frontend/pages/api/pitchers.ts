@@ -103,6 +103,17 @@ export default async function handler(
     }
   }
 
+  results.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+
+    if (dateA.getTime() !== dateB.getTime()) {
+      return dateA.getTime() - dateB.getTime(); // Ascending by date
+    }
+
+    return b.score - a.score; // Descending by score
+  });
+
   const filtered = results.filter(
     (p) =>
       (!team || p.team === team) &&
