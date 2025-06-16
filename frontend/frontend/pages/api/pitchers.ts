@@ -63,10 +63,7 @@ export default async function handler(
         (away_k_per_inning ?? 0) * 0.35 +
         (home_strikeouts_per_inning ?? 0) * 0.65;
 
-      const projectedInnings = Math.max(
-        3,
-        Math.min(9, 9 - (era * 1.5 + whip * 1.0))
-      );
+      const projectedInnings = Math.max(3, Math.min(9, 9 - (era * 1.5 + whip)));
       const inningsBonus = projectedInnings * 3;
 
       away_pitcher_score =
@@ -94,7 +91,11 @@ export default async function handler(
         (home_k_per_inning ?? 0) * 0.35 +
         (away_strikeouts_per_inning ?? 0) * 0.65;
 
-      home_pitcher_score = (era * -2 + whip * -1 + k) * 6;
+      const projectedInnings = Math.max(3, Math.min(9, 9 - (era * 1.5 + whip)));
+      const inningsBonus = projectedInnings * 3;
+
+      home_pitcher_score =
+        (era * -2 + whip * -1 + k) * projectedInnings + inningsBonus;
 
       results.push({
         name: home_pitcher,

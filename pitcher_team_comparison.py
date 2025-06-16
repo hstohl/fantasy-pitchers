@@ -46,8 +46,8 @@ try:
         # print(f"Away Team Runs/INN: {away_runs_per_inning}, Hits/Walks/INN: {away_hits_walks_per_inning}, Strikeouts/INN: {away_strikeouts_per_inning}")
         # print(f"Home Team Runs/INN: {home_runs_per_inning}, Hits/Walks/INN: {home_hits_walks_per_inning}, Strikeouts/INN: {home_strikeouts_per_inning}")
 
-        away_team_score = ((away_runs_per_inning * -2) + (away_hits_walks_per_inning * -1) + (away_strikeouts_per_inning)) * 6
-        home_team_score = ((home_runs_per_inning * -2) + (home_hits_walks_per_inning * -1) + (home_strikeouts_per_inning)) * 6
+        away_team_score = ((away_runs_per_inning * -2) + (away_hits_walks_per_inning * -1) + (away_strikeouts_per_inning)) * 5 + 15
+        home_team_score = ((home_runs_per_inning * -2) + (home_hits_walks_per_inning * -1) + (home_strikeouts_per_inning)) * 5 + 15
 
         if away_pitcher is not None:
             # away_pitcher_calc_era = (away_era + home_runs_per_inning) / 2
@@ -58,7 +58,10 @@ try:
             away_pitcher_calc_whip = (away_whip * Decimal(str(0.35)) + home_hits_walks_per_inning * Decimal(str(0.65)))
             away_pitcher_calc_k_per_inning = (away_k * Decimal(str(0.35)) + home_strikeouts_per_inning * Decimal(str(0.65)))
 
-            away_pitcher_score = ((away_pitcher_calc_era * -2) + (away_pitcher_calc_whip * -1) + (away_pitcher_calc_k_per_inning)) * 6
+            projectedInnings = max(3, min(9, 9 - (away_pitcher_calc_era * Decimal(str(1.5)) + away_pitcher_calc_whip)))
+            inningBonus = projectedInnings * 3
+
+            away_pitcher_score = ((away_pitcher_calc_era * -2) + (away_pitcher_calc_whip * -1) + (away_pitcher_calc_k_per_inning)) * projectedInnings + inningBonus
         else:
             away_pitcher_score = home_team_score
 
@@ -71,7 +74,10 @@ try:
             home_pitcher_calc_whip = (home_whip * Decimal(str(0.35)) + away_hits_walks_per_inning * Decimal(str(0.65)))
             home_pitcher_calc_k_per_inning = (home_k * Decimal(str(0.35)) + away_strikeouts_per_inning * Decimal(str(0.65)))
 
-            home_pitcher_score = ((home_pitcher_calc_era * -2) + (home_pitcher_calc_whip * -1) + (home_pitcher_calc_k_per_inning)) * 6
+            projectedInnings = max(3, min(9, 9 - (home_pitcher_calc_era * Decimal(str(1.5)) + home_pitcher_calc_whip)))
+            inningBonus = projectedInnings * 3
+
+            home_pitcher_score = ((home_pitcher_calc_era * -2) + (home_pitcher_calc_whip * -1) + (home_pitcher_calc_k_per_inning)) * projectedInnings + inningBonus
         else:
             home_pitcher_score = away_team_score
 
