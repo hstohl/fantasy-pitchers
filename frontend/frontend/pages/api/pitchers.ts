@@ -18,107 +18,97 @@ export default async function handler(
 
   const results = [];
 
-  console.log("Games count:", games.length);
-
   for (const game of games || []) {
     const {
       game_date,
       away_team,
       home_team,
       away_pitcher,
+      away_era_per_inning,
+      away_whip,
+      away_k_per_inning,
       home_pitcher,
-      away_team_stats,
-      home_team_stats,
+      home_era_per_inning,
+      home_whip,
+      home_k_per_inning,
+      away_runs_per_inning,
+      away_hits_walks_per_inning,
+      away_strikeouts_per_inning,
+      home_runs_per_inning,
+      home_hits_walks_per_inning,
+      home_strikeouts_per_inning,
     } = game;
 
-    const awayStats = away_team_stats?.[0] || {};
-    const homeStats = home_team_stats?.[0] || {};
-    const awayPitcher = away_pitcher || null;
-    const homePitcher = home_pitcher || null;
-
-    console.log("Home away:", awayStats, homeStats);
-    console.log("Home away:", awayPitcher, homePitcher);
-
     const away_team_score =
-      ((awayStats.runs_per_inning ?? 0) * -2 +
-        (awayStats.hits_walks_per_inning ?? 0) * -1 +
-        (awayStats.strikeouts_per_inning ?? 0)) *
+      ((away_runs_per_inning ?? 0) * -2 +
+        (away_hits_walks_per_inning ?? 0) * -1 +
+        (away_strikeouts_per_inning ?? 0)) *
       6;
 
     const home_team_score =
-      ((homeStats.runs_per_inning ?? 0) * -2 +
-        (homeStats.hits_walks_per_inning ?? 0) * -1 +
-        (homeStats.strikeouts_per_inning ?? 0)) *
+      ((home_runs_per_inning ?? 0) * -2 +
+        (home_hits_walks_per_inning ?? 0) * -1 +
+        (home_strikeouts_per_inning ?? 0)) *
       6;
 
     let away_pitcher_score = away_team_score;
     let home_pitcher_score = home_team_score;
 
-    if (awayPitcher) {
+    if (away_pitcher) {
       const era =
-        (awayPitcher.era_per_inning ?? 0) * 0.35 +
-        (homeStats.runs_per_inning ?? 0) * 0.65;
+        (away_era_per_inning ?? 0) * 0.35 + (home_runs_per_inning ?? 0) * 0.65;
       const whip =
-        (awayPitcher.whip ?? 0) * 0.35 +
-        (homeStats.hits_walks_per_inning ?? 0) * 0.65;
+        (away_whip ?? 0) * 0.35 + (home_hits_walks_per_inning ?? 0) * 0.65;
       const k =
-        (awayPitcher.k_per_inning ?? 0) * 0.35 +
-        (homeStats.strikeouts_per_inning ?? 0) * 0.65;
+        (away_k_per_inning ?? 0) * 0.35 +
+        (home_strikeouts_per_inning ?? 0) * 0.65;
 
       away_pitcher_score = (era * -2 + whip * -1 + k) * 6;
-    }
 
-    if (homePitcher) {
-      const era =
-        (homePitcher.era_per_inning ?? 0) * 0.35 +
-        (awayStats.runs_per_inning ?? 0) * 0.65;
-      const whip =
-        (homePitcher.whip ?? 0) * 0.35 +
-        (awayStats.hits_walks_per_inning ?? 0) * 0.65;
-      const k =
-        (homePitcher.k_per_inning ?? 0) * 0.35 +
-        (awayStats.strikeouts_per_inning ?? 0) * 0.65;
-
-      home_pitcher_score = (era * -2 + whip * -1 + k) * 6;
-    }
-
-    if (awayPitcher) {
       results.push({
-        name: awayPitcher.name,
+        name: away_pitcher,
         team: away_team,
         opponent: home_team,
         date: game_date,
         score: Number(away_pitcher_score.toFixed(2)),
-        era: awayPitcher.era_per_inning,
-        whip: awayPitcher.whip,
-        strikeouts: awayPitcher.k_per_inning,
+        era: away_era_per_inning,
+        whip: away_whip,
+        strikeouts: away_k_per_inning,
+        innings: 6,
       });
     }
 
-    if (homePitcher) {
+    if (home_pitcher) {
+      const era =
+        (home_era_per_inning ?? 0) * 0.35 + (away_runs_per_inning ?? 0) * 0.65;
+      const whip =
+        (home_whip ?? 0) * 0.35 + (away_hits_walks_per_inning ?? 0) * 0.65;
+      const k =
+        (home_k_per_inning ?? 0) * 0.35 +
+        (away_strikeouts_per_inning ?? 0) * 0.65;
+
+      home_pitcher_score = (era * -2 + whip * -1 + k) * 6;
+
       results.push({
-        name: homePitcher.name,
+        name: home_pitcher,
         team: home_team,
         opponent: away_team,
         date: game_date,
         score: Number(home_pitcher_score.toFixed(2)),
-        era: homePitcher.era_per_inning,
-        whip: homePitcher.whip,
-        strikeouts: homePitcher.k_per_inning,
+        era: home_era_per_inning,
+        whip: home_whip,
+        strikeouts: home_k_per_inning,
+        innings: 6,
       });
     }
   }
 
-  console.log("Results count:", results.length);
-
-  //   const filtered = results.filter(
-  //     (p) =>
-  //       (!team || p.team === team) &&
-  //       (!opponent || p.opponent === opponent) &&
-  //       (!date || p.date === date)
-  //   );
-
-  const filtered = results;
+  const filtered = results.filter(
+    (p) =>
+      (!team || p.team === team) &&
+      (!opponent || p.opponent === opponent) &&
+      (!date || p.date === date)
+  );
 
   res.status(200).json(filtered);
 }
