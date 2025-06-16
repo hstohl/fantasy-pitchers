@@ -33,8 +33,8 @@ export default async function handler(
 
     const awayStats = away_team_stats?.[0] || {};
     const homeStats = home_team_stats?.[0] || {};
-    const awayPitcher = away_pitcher?.[0] || null;
-    const homePitcher = home_pitcher?.[0] || null;
+    const awayPitcher = away_pitcher || null;
+    const homePitcher = home_pitcher || null;
 
     console.log("Home away:", awayStats, homeStats);
     console.log("Home away:", awayPitcher, homePitcher);
