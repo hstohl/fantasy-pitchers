@@ -1,0 +1,30 @@
+name: Run Daily Python Scripts
+
+on:
+  schedule:
+    - cron: "0 12 * * *" # Every day at 6 AM Central Time (12:00 UTC)
+  workflow_dispatch: # Allows manual run from GitHub UI
+
+jobs:
+  run-scripts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run team-stats.py
+        run: python team-stats.py
+
+      - name: Run matchup-stats.py
+        run: python matchup-stats.py
