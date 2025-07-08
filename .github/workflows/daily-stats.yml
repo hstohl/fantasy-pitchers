@@ -1,8 +1,8 @@
 name: Run Daily Python Scripts
 
 on:
-  schedule:
-    - cron: "0 12 * * *" # Every day at 6 AM Central Time (12:00 UTC)
+  #schedule:
+  # - cron: "0 12 * * *" # Every day at 6 AM Central Time (12:00 UTC)
   workflow_dispatch: # Allows manual run from GitHub UI
 
 jobs:
