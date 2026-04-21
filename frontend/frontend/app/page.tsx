@@ -65,8 +65,16 @@ export default function Home() {
     if (dateFilter) params.append("date", dateFilter);
 
     fetch(`/api/pitchers?${params.toString()}`)
-      .then((res) => res.json())
-      .then((data) => setPitchers(data));
+      .then(async (res) => {
+        const payload = await res.json();
+        return res.ok ? payload : [];
+      })
+      .then((data) => {
+        setPitchers(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        setPitchers([]);
+      });
   }, [teamFilter, opponentFilter, dateFilter]);
 
   return (

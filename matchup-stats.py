@@ -125,6 +125,12 @@ try:
             home_pitcher_id INT
         );
     """)
+
+    # Remove games that have already happened.
+    cursor.execute("""
+        DELETE FROM games
+        WHERE game_date < CURRENT_DATE;
+    """)
     
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS pitchers (
@@ -136,20 +142,23 @@ try:
         );
     """)
 
+    cursor.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS pitchers_name_idx
+        ON pitchers (name);
+    """)
+
     def get_pitcher_id(pitcher):
         if pitcher is None:
             return None
 
-        # Check if pitcher already exists
-        cursor.execute("SELECT pitcher_id FROM pitchers WHERE name = %s", (pitcher['name'],))
-        result = cursor.fetchone()
-        if result:
-            return result[0]
-        
-        # Insert new pitcher
+        # Insert new pitchers and refresh stats for existing pitchers.
         cursor.execute("""
             INSERT INTO pitchers (name, era_per_inning, whip, k_per_inning)
             VALUES (%s, %s, %s, %s)
+            ON CONFLICT (name) DO UPDATE SET
+                era_per_inning = EXCLUDED.era_per_inning,
+                whip = EXCLUDED.whip,
+                k_per_inning = EXCLUDED.k_per_inning
             RETURNING pitcher_id;
         """, (
             pitcher['name'],

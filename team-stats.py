@@ -54,8 +54,7 @@ try:
     cursor = connection.cursor()
 
     cursor.execute("""
-            DROP TABLE IF EXISTS mlb_team_stats;
-            CREATE TABLE mlb_team_stats (
+            CREATE TABLE IF NOT EXISTS mlb_team_stats (
                 team_name TEXT PRIMARY KEY,
                 runs_per_inning NUMERIC(8, 7),
                 hits_walks_per_inning NUMERIC(8, 7),
@@ -70,7 +69,7 @@ try:
                 ON CONFLICT (team_name) DO UPDATE SET
                     runs_per_inning = EXCLUDED.runs_per_inning,
                     hits_walks_per_inning = EXCLUDED.hits_walks_per_inning,
-                    strikeouts_per_inning = EXCLUDED.strikeouts_per_inning   
+                    strikeouts_per_inning = EXCLUDED.strikeouts_per_inning;
             """, (
                 row['teamName'],
                 row['runs_per_inning'],
