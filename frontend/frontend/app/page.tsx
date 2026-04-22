@@ -15,13 +15,13 @@ type Pitcher = {
 
 const mlbTeams = [
   "Arizona Diamondbacks",
-  "Atlanta Braves",
   "Athletics",
+  "Atlanta Braves",
   "Baltimore Orioles",
   "Boston Red Sox",
-  "Cincinnati Reds",
   "Chicago Cubs",
   "Chicago White Sox",
+  "Cincinnati Reds",
   "Cleveland Guardians",
   "Colorado Rockies",
   "Detroit Tigers",
